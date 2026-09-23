@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+
+# game files and the tools the app downloads at runtime never belong in the repo
+*.forge
+*.exe
+*.dll
+*.7z

@@ -1,0 +1,116 @@
+import { useEffect, useState } from 'react'
+import { Copy, House, LibraryBig, LockOpen, Minus, SlidersHorizontal, Square, X } from 'lucide-react'
+import { api } from './api'
+import { Mark, SeasonArt } from './art'
+import { useI18n } from './i18n'
+import Home from './pages/Home'
+import Library from './pages/Library'
+import Liberator from './pages/Liberator'
+import Settings from './pages/Settings'
+import { AccountPill, JobChip } from './session'
+
+export type Page = 'home' | 'library' | 'liberator' | 'settings'
+export type Art = { seed: number; hue: number; image?: string }
+
+const NAV = [
+  ['home', House],
+  ['library', LibraryBig],
+  ['liberator', LockOpen],
+  ['settings', SlidersHorizontal]
+] as const
+
+type Motion = '' | 'closing' | 'minimizing' | 'settle'
+
+function firstPage(): Page {
+  const hash = location.hash.slice(1)
+  return NAV.some(([id]) => id === hash) ? (hash as Page) : 'home'
+}
+
+export default function App() {
+  const { t } = useI18n()
+  const [page, setPage] = useState<Page>(firstPage)
+  const [art, setArt] = useState<Art>({ seed: 41, hue: 196 })
+  const [motion, setMotion] = useState<Motion>('')
+  const [maximized, setMaximized] = useState(false)
+  const [focus, setFocus] = useState<string | null>(null)
+
+  // The window fades itself; the page adds depth: shrink on exit, settle on return.
+  useEffect(
+    () =>
+      api.onWindow((state) => {
+        if (state === 'closing' || state === 'minimizing') return setMotion(state)
+        if (state === 'maximize' || state === 'unmaximize') setMaximized(state === 'maximize')
+        setMotion('settle')
+        setTimeout(() => setMotion(''), 420)
+      }),
+    []
+  )
+
+  const openSeason = (key: string | null) => {
+    setFocus(key)
+    if (key) setPage('library')
+  }
+  const shared = { go: setPage, setArt, focus, openSeason }
+
+  return (
+    <div className={`app ${motion}`}>
+      <div className="backdrop" key={`${art.seed}-${art.hue}-${art.image ?? ''}`}>
+        <SeasonArt cover={art.image} seed={art.seed} hue={art.hue} />
+      </div>
+
+      <header className="topbar">
+        <div className="brand">
+          <Mark />
+          <div>
+            <b>NOSTALGIA</b>
+            <span>
+              {t('brand.tag')} {__VERSION__.replace(/\.0$/, '')}
+            </span>
+          </div>
+        </div>
+        <nav className="nav">
+          {NAV.map(([id, Icon]) => (
+            <button key={id} className={page === id ? 'active' : ''} onClick={() => setPage(id)}>
+              <Icon size={18} strokeWidth={1.8} />
+              {t(`nav.${id}`)}
+            </button>
+          ))}
+        </nav>
+        <div className="top-right">
+          <JobChip onOpen={openSeason} />
+          <AccountPill />
+          <div className="winbtns">
+            <button onClick={() => api.window('minimize')} aria-label={t('window.minimize')} data-tip={t('window.minimize')}>
+              <Minus size={15} />
+            </button>
+            <button
+              onClick={() => api.window('maximize')}
+              aria-label={t(maximized ? 'window.restore' : 'window.maximize')}
+              data-tip={t(maximized ? 'window.restore' : 'window.maximize')}
+            >
+              {maximized ? <Copy size={12} /> : <Square size={12} />}
+            </button>
+            <button className="close" onClick={() => api.window('close')} aria-label={t('window.close')} data-tip={t('window.close')} data-tip-side="left">
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="page" key={page}>
+        {page === 'home' && <Home {...shared} />}
+        {page === 'library' && <Library {...shared} />}
+        {page === 'liberator' && <Liberator {...shared} />}
+        {page === 'settings' && <Settings {...shared} />}
+      </main>
+    </div>
+  )
+}
+
+export type PageProps = {
+  go: (page: Page) => void
+  setArt: (art: Art) => void
+  /** a season the Library should open straight away (null once it has) */
+  focus: string | null
+  openSeason: (key: string | null) => void
+}

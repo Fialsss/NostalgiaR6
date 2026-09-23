@@ -1,0 +1,83 @@
+{
+  "name": "nostalgia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Download, mod and launch past seasons of Rainbow Six Siege from one window.",
+  "license": "GPL-3.0-or-later",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/main/ini.test.ts",
+    "dist": "electron-vite build && electron-builder --win"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "lucide-react": "^1.47.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.6"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true,
+    "electron-winstaller": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fialsss/NostalgiaR6.git"
+  },
+  "homepage": "https://github.com/Fialsss/NostalgiaR6",
+  "productName": "Nostalgia",
+  "author": "Fialsss",
+  "build": {
+    "appId": "io.github.fialsss.nostalgia",
+    "productName": "Nostalgia",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*",
+      "resources/icon.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "resources/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Nostalgia-Setup-${version}.exe"
+    },
+    "portable": {
+      "artifactName": "Nostalgia-${version}-portable.exe"
+    }
+  }
+}

@@ -1,0 +1,651 @@
+[
+ {
+  "id": "Y1S0",
+  "key": "Y1S0_Vanilla",
+  "name": "Vanilla",
+  "date": "2015-12-05",
+  "build": "8194013",
+  "size": 14.2,
+  "manifests": {
+   "ww": "8358812283631269928",
+   "rus": "6835384933146381100",
+   "content": "3893422760579204530"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y1S1",
+  "key": "Y1S1_BlackIce",
+  "name": "Black Ice",
+  "date": "2016-02-02",
+  "build": "8519860",
+  "size": 16.7,
+  "manifests": {
+   "ww": "5188997148801516344",
+   "rus": "5362991837480196824",
+   "content": "7932785808040895147"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y1S2",
+  "key": "Y1S2_DustLine",
+  "name": "Dust Line",
+  "date": "2016-05-11",
+  "build": "9132097",
+  "size": 20.9,
+  "manifests": {
+   "ww": "2303064029242396590",
+   "rus": "3040224537841664111",
+   "content": "2206497318678061176"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y1S3",
+  "key": "Y1S3_SkullRain",
+  "name": "Skull Rain",
+  "date": "2016-09-13",
+  "build": "9860556",
+  "size": 25.1,
+  "manifests": {
+   "ww": "5819137024728546741",
+   "rus": "2956768406107766016",
+   "content": "5851804596427790505"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y1S4",
+  "key": "Y1S4_RedCrow",
+  "name": "Red Crow",
+  "date": "2016-11-17",
+  "build": "10211195",
+  "size": 28.5,
+  "manifests": {
+   "ww": "3576607363557872807",
+   "rus": "912564683190696342",
+   "content": "8569920171217002292"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y2S1",
+  "key": "Y2S1_VelvetShell",
+  "name": "Velvet Shell",
+  "date": "2017-02-07",
+  "build": "10751226",
+  "size": 33.2,
+  "manifests": {
+   "ww": "2248734317261478192",
+   "rus": "2687181326074258760",
+   "content": "8006071763917433748"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y2S2",
+  "key": "Y2S2_Health",
+  "name": "Health",
+  "date": "2017-06-07",
+  "build": "11216230",
+  "size": 34.0,
+  "manifests": {
+   "ww": "5875987479498297665",
+   "rus": "8542242518901049325",
+   "content": "708773000306432190"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y2S3",
+  "key": "Y2S3_BloodOrchid",
+  "name": "Blood Orchid",
+  "date": "2017-09-19",
+  "build": "11432634",
+  "size": 34.3,
+  "manifests": {
+   "ww": "6708129824495912434",
+   "rus": "4662662335520989204",
+   "content": "1613631671988840841"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y2S4",
+  "key": "Y2S4_WhiteNoise",
+  "name": "White Noise",
+  "date": "2017-12-14",
+  "build": "11580709",
+  "size": 48.7,
+  "manifests": {
+   "ww": "8748734086032257441",
+   "rus": "8175359039160965183",
+   "content": "4221297486420648079"
+  },
+  "liberator": "full",
+  "event": ""
+ },
+ {
+  "id": "Y3S1",
+  "key": "Y3S1_Chimera",
+  "name": "Chimera",
+  "date": "2018-03-06",
+  "build": "11726982",
+  "size": 58.8,
+  "manifests": {
+   "ww": "5071357104726974256",
+   "rus": "4768963659370299631",
+   "content": "4701787239566783972"
+  },
+  "liberator": "events",
+  "event": "Outbreak",
+  "table": "y3s1-chimera.ct"
+ },
+ {
+  "id": "Y3S2",
+  "key": "Y3S2_ParaBellum",
+  "name": "Para Bellum",
+  "date": "2018-06-07",
+  "build": "11965022",
+  "size": 63.3,
+  "manifests": {
+   "ww": "6507886921175556869",
+   "rus": "7995779530685147208",
+   "content": "8765715607275074515"
+  },
+  "liberator": "events",
+  "event": ""
+ },
+ {
+  "id": "Y3S3",
+  "key": "Y3S3_GrimSky",
+  "name": "Grim Sky",
+  "date": "2018-10-18",
+  "build": "12362767",
+  "size": 72.6,
+  "manifests": {
+   "ww": "5562094852451837435",
+   "rus": "5465169470949211447",
+   "content": "7781202564071310413"
+  },
+  "liberator": "events",
+  "event": "Mad House"
+ },
+ {
+  "id": "Y3S4",
+  "key": "Y3S4_WindBastion",
+  "name": "Wind Bastion",
+  "date": "2018-12-04",
+  "build": "12512571",
+  "size": 76.9,
+  "manifests": {
+   "ww": "6502258854032233436",
+   "rus": "5406593359909338734",
+   "content": "7659555540733025386"
+  },
+  "liberator": "events",
+  "event": ""
+ },
+ {
+  "id": "Y4S1",
+  "key": "Y4S1_BurntHorizon",
+  "name": "Burnt Horizon",
+  "date": "2019-03-14",
+  "build": "12863847",
+  "size": 58.8,
+  "manifests": {
+   "ww": "8356277316976403078",
+   "rus": "1384328559966859661",
+   "content": "5935578581006804383"
+  },
+  "liberator": "events",
+  "event": "Rainbow is Magic"
+ },
+ {
+  "id": "Y4S2",
+  "key": "Y4S2_PhantomSight",
+  "name": "Phantom Sight",
+  "date": "2019-06-11",
+  "build": "13147883",
+  "size": 67.1,
+  "manifests": {
+   "ww": "693082837425613508",
+   "rus": "3326664059403997209",
+   "content": "5408324128694463720"
+  },
+  "liberator": "events",
+  "event": "Showdown"
+ },
+ {
+  "id": "Y4S3",
+  "key": "Y4S3_EmberRise",
+  "name": "Ember Rise",
+  "date": "2019-10-22",
+  "build": "13632147",
+  "size": 69.6,
+  "manifests": {
+   "ww": "3546781236735558235",
+   "rus": "684480090862996679",
+   "content": "7869081741739849703"
+  },
+  "liberator": "events",
+  "event": "Doktor's Curse / Money Heist"
+ },
+ {
+  "id": "Y4S4",
+  "key": "Y4S4_ShiftingTides",
+  "name": "Shifting Tides",
+  "date": "2019-12-03",
+  "build": "13777760",
+  "size": 75.2,
+  "manifests": {
+   "ww": "299124516841461614",
+   "rus": "510172308722680354",
+   "content": "1842268638395240106"
+  },
+  "liberator": "events",
+  "event": "Road To S.I. 2020"
+ },
+ {
+  "id": "Y5S1",
+  "key": "Y5S1_VoidEdge",
+  "name": "Void Edge",
+  "date": "2020-04-30",
+  "build": "14303219",
+  "size": 74.3,
+  "manifests": {
+   "ww": "4736360397583523381",
+   "rus": "2583838033617047180",
+   "content": "6296533808765702678"
+  },
+  "liberator": "events",
+  "event": "Grand Larceny / Golden Gun"
+ },
+ {
+  "id": "Y5S2",
+  "key": "Y5S2_SteelWave",
+  "name": "Steel Wave",
+  "date": "2020-08-10",
+  "build": "14664131",
+  "size": 81.3,
+  "manifests": {
+   "ww": "4367817844736324940",
+   "rus": "5838065097101371940",
+   "content": "893971391196952070"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y5S3",
+  "key": "Y5S3_ShadowLegacy",
+  "name": "Shadow Legacy",
+  "date": "2020-11-17",
+  "build": "15018155",
+  "size": 88.0,
+  "manifests": {
+   "ww": "85893637567200342",
+   "rus": "4020038723910014041",
+   "content": "3089981610366186823"
+  },
+  "liberator": "unlock",
+  "event": "",
+  "hm": "0.2.3",
+  "table": "y5s3-shadowlegacy.ct"
+ },
+ {
+  "id": "Y5S4",
+  "key": "Y5S4_NeonDawn",
+  "name": "Neon Dawn",
+  "date": "2021-01-19",
+  "build": "15241382",
+  "size": 57.0,
+  "manifests": {
+   "ww": "3390446325154338855",
+   "rus": "3175150742361965235",
+   "content": "6947060999143280245"
+  },
+  "liberator": "unlock",
+  "event": "",
+  "hm": "latest"
+ },
+ {
+  "id": "Y6S1",
+  "key": "Y6S1_CrimsonHeist",
+  "name": "Crimson Heist",
+  "date": "2021-05-31",
+  "build": "15680437",
+  "size": 44.9,
+  "manifests": {
+   "ww": "2200775373002020326",
+   "rus": "8008777170632151465",
+   "content": "7781896841500953375"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y6S2",
+  "key": "Y6S2_NorthStar",
+  "name": "North Star",
+  "date": "2021-08-12",
+  "build": "15772114",
+  "size": 62.1,
+  "manifests": {
+   "ww": "8537616701006158335",
+   "rus": "7182046459781166052",
+   "content": "5588923295150591607"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y6S3",
+  "key": "Y6S3_CrystalGuard",
+  "name": "Crystal Guard",
+  "date": "2021-11-15",
+  "build": "35130040",
+  "size": 50.3,
+  "manifests": {
+   "ww": "9055328556991635819",
+   "rus": "4405065504084928682",
+   "content": "1030120416124554825"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y6S4",
+  "key": "Y6S4_HighCalibre",
+  "name": "High Calibre",
+  "date": "2022-01-25",
+  "build": "37046065",
+  "size": 54.2,
+  "manifests": {
+   "ww": "2637055726475611418",
+   "rus": "2074678920289758165",
+   "content": "8627214406801860013"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y7S1",
+  "key": "Y7S1_DemonVeil",
+  "name": "Demon Veil",
+  "date": "2022-04-19",
+  "build": "39785137",
+  "size": 58.8,
+  "manifests": {
+   "ww": "8323869632165751287",
+   "rus": "1970003626423861715",
+   "content": "2178080523228113690"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y7S2",
+  "key": "Y7S2_VectorGlare",
+  "name": "Vector Glare",
+  "date": "2022-08-09",
+  "build": "43489433",
+  "size": 58.8,
+  "manifests": {
+   "ww": "1363132201391540345",
+   "rus": "4500117484519539380",
+   "content": "133280937611742404"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y7S3",
+  "key": "Y7S3_BrutalSwarm",
+  "name": "Brutal Swarm",
+  "date": "2022-11-16",
+  "build": "47165842",
+  "size": 49.2,
+  "manifests": {
+   "ww": "6425223567680952075",
+   "rus": "4623590620762156001",
+   "content": "5906302942203575464"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y7S4",
+  "key": "Y7S4_SolarRaid",
+  "name": "Solar Raid",
+  "date": "2023-02-07",
+  "build": "50497889",
+  "size": 51.1,
+  "manifests": {
+   "ww": "4466027729495813039",
+   "rus": "5107849703917033235",
+   "content": "1819898955518120444"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y8S1",
+  "key": "Y8S1_CommandingForce",
+  "name": "Commanding Force",
+  "date": "2023-05-09",
+  "build": "55217154",
+  "size": 53.8,
+  "manifests": {
+   "ww": "3275824905781062648",
+   "rus": "1252692309389076318",
+   "content": "5863062164463920572"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y8S2",
+  "key": "Y8S2_DreadFactor",
+  "name": "Dread Factor",
+  "date": "2023-07-11",
+  "build": "58222837",
+  "size": 55.0,
+  "manifests": {
+   "ww": "4313757428310343948",
+   "rus": "4293396692730784956",
+   "content": "5581702357198571389"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y8S3",
+  "key": "Y8S3_HeavyMettle",
+  "name": "Heavy Mettle",
+  "date": "2023-10-10",
+  "build": "62486471",
+  "size": 54.8,
+  "manifests": {
+   "ww": "2068160275622519212",
+   "rus": "2579928666708989224",
+   "content": "3005637025719884427"
+  },
+  "liberator": "unlock",
+  "event": ""
+ },
+ {
+  "id": "Y8S4",
+  "key": "Y8S4_DeepFreeze",
+  "name": "Deep Freeze",
+  "date": "2024-02-15",
+  "build": "67466841",
+  "size": 52.9,
+  "manifests": {
+   "ww": "7646647065987620875",
+   "rus": "8339919149418587132",
+   "content": "4957295777170965935"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y9S1",
+  "key": "Y9S1_DeadlyOmen",
+  "name": "Deadly Omen",
+  "date": "2024-04-09",
+  "build": "69866602",
+  "size": 54.4,
+  "manifests": {
+   "ww": "1959067516419454682",
+   "rus": "1619182300337183882",
+   "content": "1140469899661941149"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y9S2",
+  "key": "Y9S2_NewBlood",
+  "name": "New Blood",
+  "date": "2024-07-11",
+  "build": "72730050",
+  "size": 56.0,
+  "manifests": {
+   "ww": "6874184890918352263",
+   "rus": "3648252944070415883",
+   "content": "2171250367116101899"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y9S3",
+  "key": "Y9S3_TwinShells",
+  "name": "Twin Shells",
+  "date": "2024-11-07",
+  "build": "79429095",
+  "size": 59.2,
+  "manifests": {
+   "ww": "4296569502001540403",
+   "rus": "3038245830342960035",
+   "content": "825321500774263546"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y9S4",
+  "key": "Y9S4_CollisionPoint",
+  "name": "Collision Point",
+  "date": "2025-01-21",
+  "build": "82873685",
+  "size": 59.2,
+  "manifests": {
+   "ww": "9207916394092784817",
+   "rus": "6303744364362141965",
+   "content": "3039751959139581613"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y10S1",
+  "key": "Y10S1_PrepPhase",
+  "name": "Prep Phase",
+  "date": "2025-04-16",
+  "build": "87835624",
+  "size": 51.4,
+  "manifests": {
+   "ww": "8382986432868135995",
+   "rus": "3364322644809414267",
+   "content": "2619322944995294928"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y10S2",
+  "key": "Y10S2_DayBreak",
+  "name": "Day Break",
+  "date": "2025-06-25",
+  "build": "91107972",
+  "size": 57.6,
+  "manifests": {
+   "ww": "6185866687945877979",
+   "rus": "1824670522228133032",
+   "content": "6061565907083200123"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y10S3",
+  "key": "Y10S3_HighStakes",
+  "name": "High Stakes",
+  "date": "2025-11-05",
+  "build": "97612398",
+  "size": 64.1,
+  "manifests": {
+   "ww": "6414584647978564432",
+   "rus": "1658045533304550915",
+   "content": "2991287519065391053"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y10S4",
+  "key": "Y10S4_TenfoldPursuit",
+  "name": "Tenfold Pursuit",
+  "date": "2026-01-20",
+  "build": "101173381",
+  "size": 64.1,
+  "manifests": {
+   "ww": "5312359447964179543",
+   "rus": "10916617612972931",
+   "content": "4662717791508703860"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y11S1",
+  "key": "Y11S1_SilentHunt",
+  "name": "Silent Hunt",
+  "date": "2026-05-14",
+  "build": "108519331",
+  "size": 47.8,
+  "manifests": {
+   "ww": "6538965566725574323",
+   "rus": "5822704009378799838",
+   "content": "4262752188904831422"
+  },
+  "liberator": "",
+  "event": ""
+ },
+ {
+  "id": "Y11S2",
+  "key": "Y11S2_SystemOverride",
+  "name": "System Override",
+  "date": "2026-08-10",
+  "build": "114706078",
+  "size": 45.6,
+  "manifests": {
+   "ww": "3438364557114734245",
+   "rus": "3173464615412315924",
+   "content": "8562525939111846234"
+  },
+  "liberator": "",
+  "event": ""
+ }
+]

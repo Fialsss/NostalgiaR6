@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#111114"/>
+      <stop offset="1" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".55" stop-color="#e4e7eb"/>
+      <stop offset="1" stop-color="#9fa4ac"/>
+    </linearGradient>
+    <mask id="six">
+      <path fill="#fff" d="M125 125A75 75 0 0 1 275 125V305A45 45 0 0 1 230 350H170A45 45 0 0 1 125 305Z"/>
+      <g fill="#000">
+        <rect x="193" y="104" width="19" height="120" rx="9.5"/>
+        <path d="M193 134H290V201H275A30 30 0 0 0 245 171H193Z"/>
+        <path d="M166 206H238V225H222V254L215 262H202L198 320H169L173 238L163 231L166 225Z"/>
+      </g>
+      <rect fill="#fff" x="203" y="232" width="13" height="22" rx="3"/>
+    </mask>
+  </defs>
+  <rect x="10" y="10" width="380" height="380" rx="90" fill="url(#bg)"/>
+  <rect width="400" height="400" fill="url(#metal)" mask="url(#six)"/>
+</svg>
