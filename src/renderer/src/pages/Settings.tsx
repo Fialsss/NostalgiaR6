@@ -173,6 +173,11 @@ export default function Settings({ setArt }: PageProps) {
                 <div className="setting-label">
                   <b>{t('setting.library')}</b>
                   <small>{t('setting.library.hint')}</small>
+                  {!!values?.libraries.length && (
+                    <small className="mono others">
+                      {t('setting.library.others')} {values.libraries.join(' · ')}
+                    </small>
+                  )}
                 </div>
                 <div className="setting-control">
                   <div className="path-field ok" data-tip={values?.library}>

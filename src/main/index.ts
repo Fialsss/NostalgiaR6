@@ -133,6 +133,7 @@ else {
   app.whenReady().then(() => {
     createWindow()
     steam.ensureTool(false).catch(() => undefined) // ready before the first sign-in; offline, that sign-in retries
+    liberator.prefetch()
   })
 }
 app.on('window-all-closed', () => app.quit())

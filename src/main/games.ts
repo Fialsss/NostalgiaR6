@@ -37,7 +37,16 @@ const find = (key: string): Season => {
   if (!season) throw new Error(`Unknown season ${key}`)
   return season
 }
-const folder = (s: Season) => join(settings().library, s.key)
+/** Every library folder: where new downloads go first, then the ones chosen before. */
+function roots(): string[] {
+  const { library, libraries } = settings()
+  return [...new Set([library, ...libraries])]
+}
+/** A season lives in the first library folder holding its files; a new one goes where downloads go now. */
+function folder(s: Season): string {
+  const found = roots().map((root) => join(root, s.key)).find((dir) => existsSync(join(dir, LAUNCHER)) || started(dir))
+  return found ?? join(settings().library, s.key)
+}
 const tableFile = (s: Season) => join(folder(s), `${s.key}.ct`)
 
 /** Free space where the library lives (the nearest folder that exists). */
@@ -171,9 +180,8 @@ async function remove({ key }: { key: string }) {
   const s = find(key)
   if (running?.key === key) throw new Error('error.running')
   if (job?.key === key) throw new Error('error.busy')
-  const root = resolve(settings().library)
   const dir = resolve(folder(s))
-  if (!dir.startsWith(root + sep)) throw new Error('Refusing to delete outside the library folder')
+  if (!roots().some((root) => dir.startsWith(resolve(root) + sep))) throw new Error('Refusing to delete outside the library folders')
   await rm(dir, { recursive: true, force: true })
   return list()
 }

@@ -2895,3 +2895,9 @@ p {
 .setting:has(.profiles) {
   align-items: start;
 }
+.setting-label small.others {
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-size: 11px;
+  user-select: text;
+}

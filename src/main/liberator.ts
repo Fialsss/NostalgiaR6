@@ -39,11 +39,18 @@ async function fetchExe() {
   return snapshot()
 }
 
-export function start(): void {
+/** Fetched in the background at startup, like DepotDownloader: there is no setup step to remember. */
+export function prefetch(): void {
+  if (!available()) fetchExe().catch(() => undefined) // offline: the first supported launch tries again
+}
+
+export async function start(): Promise<void> {
   game = true
   delay = FIRST_TRY
-  if (settings().liberator) later(3000) // give the game a moment to exist
   emit('liberator.state', snapshot())
+  if (!settings().liberator) return
+  if (!available()) await fetchExe().catch(() => undefined)
+  later(3000) // give the game a moment to exist
 }
 
 export function stop(): void {

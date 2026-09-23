@@ -8,7 +8,8 @@ export const HOME = app.getPath('userData')
 export const TOOLS = join(HOME, 'tools')
 
 const DEFAULTS = {
-  library: join(homedir(), 'Nostalgia'),
+  library: join(homedir(), 'Nostalgia'), // where new downloads go
+  libraries: [] as string[], // every folder chosen before: their seasons stay in the library
   username: '', // in-game name; empty = the Steam name
   steam_user: '',
   liberator: true,
@@ -34,7 +35,9 @@ export function update(changes: Partial<Settings>): Settings {
   const unknown = Object.keys(changes).filter((k) => !(k in DEFAULTS))
   if (unknown.length) throw new Error(`Unknown settings: ${unknown.join(', ')}`)
   if (changes.username && !NAME.test(changes.username)) throw new Error('error.username')
-  const merged = { ...settings(), ...changes }
+  const current = settings()
+  const merged = { ...current, ...changes }
+  if (changes.library && changes.library !== current.library) merged.libraries = [...new Set([...current.libraries, current.library])].filter((f) => f !== changes.library)
   mkdirSync(HOME, { recursive: true })
   writeFileSync(FILE, JSON.stringify(merged, null, 2))
   return merged
