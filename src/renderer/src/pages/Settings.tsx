@@ -34,7 +34,7 @@ type Tools = { depot: boolean; loader: boolean; liberator: boolean }
 type Preset = { from: string; at: number; values: Record<string, string>; auto: boolean }
 type Profile = { id: string; season: string; modified: number; keys: number }
 
-export default function Settings({ setArt }: PageProps) {
+export default function Settings({ setArt, startTour }: PageProps) {
   const { t, lang, setLang } = useI18n()
   const { profile, signIn, signOut, toast } = useSession()
   const [library, reload] = useLibrary()
@@ -236,6 +236,18 @@ export default function Settings({ setArt }: PageProps) {
             })}
 
           {section === 'help' && (
+            <>
+            <div className="setting">
+              <div className="setting-label">
+                <b>{t('nav.guide')}</b>
+                <small>{t('help.tour.hint')}</small>
+              </div>
+              <div className="setting-control">
+                <button className="btn ghost small" onClick={startTour}>
+                  <CircleHelp size={14} /> {t('help.tour')}
+                </button>
+              </div>
+            </div>
             <div className="faq">
               {FAQ.map((key) => (
                 <details key={key}>
@@ -247,6 +259,7 @@ export default function Settings({ setArt }: PageProps) {
                 </details>
               ))}
             </div>
+            </>
           )}
 
           {section === 'about' && (

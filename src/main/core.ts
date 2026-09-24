@@ -14,7 +14,9 @@ const DEFAULTS = {
   steam_user: '',
   liberator: true,
   last_played: '', // the season started last, for Home's "last played"
-  last_played_at: 0
+  last_played_at: 0,
+  tour_seen: false, // the guide opens by itself once, on the very first launch
+  notice_seen: '' // the version whose "in development" notice was read: a new version shows it again
 }
 export type Settings = typeof DEFAULTS
 

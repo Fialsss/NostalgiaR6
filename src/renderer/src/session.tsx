@@ -163,6 +163,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     api.call<string | null>('games.running').then(setPlaying)
   }, [])
+  useEvent<{ key: string; mod: string }>('mods.installed', (d) =>
+    toast(t('workshop.installed', { mod: d.mod === 'hm' ? 'Heated Metal' : t('mod.table'), season: seasonId(d.key) }), 'ok')
+  )
+  useEvent<{ error: string }>('mods.failed', (d) => toast(t(d.error), 'bad'))
   useEvent<{ key: string } | null>('games.running', (d) => {
     setPlaying(d?.key ?? null)
     if (d) api.window('minimize') // the game takes the screen: step aside to the taskbar

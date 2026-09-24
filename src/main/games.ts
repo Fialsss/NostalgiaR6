@@ -147,7 +147,7 @@ async function install({ key }: { key: string }) {
   const dir = folder(s)
   // a new season must fit, with a gigabyte to spare: a full system drive is worse than no download
   if (!started(dir) && freeSpace(dir) < (s.size + 1) * 1024 ** 3) throw new Error('error.space')
-  return exclusive(async () => {
+  await exclusive(async () => {
     job = { key }
     let outcome: 'ok' | 'cancelled' | 'failed' = 'failed'
     emit('games.started', { key })
@@ -171,8 +171,18 @@ async function install({ key }: { key: string }) {
       job = null
       emit('games.ended', { key, ok: outcome === 'ok', cancelled: outcome === 'cancelled' })
     }
-    return list()
   })
+  // mods picked in the Workshop before the season was here go in now
+  for (const mod of after.get(key) ?? []) {
+    try {
+      await INSTALL[mod]({ key })
+      emit('mods.installed', { key, mod })
+    } catch (error) {
+      emit('mods.failed', { key, mod, error: (error as Error).message })
+    }
+  }
+  after.delete(key)
+  return list()
 }
 
 /** Delete a season's folder, never anything outside the library. */
@@ -299,7 +309,22 @@ function tools() {
   return { depot: tool().ok, loader: existsSync(join(LOADER, LAUNCHER)), liberator: liberator.available() }
 }
 
+/** The season played last, when it's still installed: the tray offers to start it again. */
+export function lastPlayable() {
+  const { last_played } = settings()
+  return list().seasons.find((s) => s.key === last_played && s.installed)
+}
+
+// Workshop: a mod picked for a season that isn't downloaded yet waits here for its download
+const INSTALL: Record<string, (args: { key: string }) => Promise<unknown>> = { hm: installHm, table: getTable }
+const after = new Map<string, Set<string>>()
+
 export const methods: Methods = {
+  'mods.after': ({ key, mod }: { key: string; mod: string }) => {
+    if (!(mod in INSTALL)) throw new Error(`Unknown mod ${mod}`)
+    after.set(key, (after.get(key) ?? new Set()).add(mod))
+    return true
+  },
   'games.list': list,
   'games.tools': tools,
   'games.install': install,

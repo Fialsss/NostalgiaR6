@@ -104,7 +104,7 @@ export default function Home({ go, setArt, openSeason }: PageProps) {
   return (
     <div className="home">
       <section className="hero">
-        <SeasonArt className="hero-art" cover={keyArt(slide.season)} seed={seed} hue={hueOf(slide.season)} key={slide.id} />
+        <SeasonArt className="hero-art" cover={keyArt(slide.season, 'full')} seed={seed} hue={hueOf(slide.season)} key={slide.id} />
         <div className="hero-veil" />
         <div className="hero-arrows">
           <button onClick={() => step(-1)} aria-label={t('home.prev')} data-tip={t('home.prev')}>

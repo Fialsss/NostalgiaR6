@@ -5,8 +5,6 @@ import {
   ArrowRight,
   Check,
   DownloadCloud,
-  ExternalLink,
-  Flame,
   FolderOpen,
   Gamepad2,
   HardDrive,
@@ -19,7 +17,6 @@ import {
   Search,
   ShieldCheck,
   Smartphone,
-  Table2,
   X
 } from 'lucide-react'
 import type { PageProps } from '../App'
@@ -29,7 +26,7 @@ import { useI18n } from '../i18n'
 import { overall, seasonId, useSession } from '../session'
 import { Chip, ConfirmButton, Notice, PageHead, Segmented, Spinner, type Tone } from '../ui'
 
-export function seasonState(s: Season): [string, Tone] {
+function seasonState(s: Season): [string, Tone] {
   if (s.running) return ['state.playing', 'ok']
   if (s.downloading) return ['state.downloading', 'info']
   if (s.installed) return ['state.installed', 'ok']
@@ -134,6 +131,11 @@ function Install({ season: s, index, open }: { season: Season; index: number; op
       <div className="install-media">
         <SeasonArt cover={keyArt(s.key)} seed={seedOf(s)} hue={hueOf(s.id)} />
         <div className="install-veil" />
+        {here && (
+          <div className="install-bar">
+            <i style={{ width: `${overall(job)}%` }} />
+          </div>
+        )}
       </div>
       <div className="install-top">
         <Chip tone={tone}>{t(state)}</Chip>
@@ -166,11 +168,6 @@ function Install({ season: s, index, open }: { season: Season; index: number; op
           </button>
         )}
       </div>
-      {here && (
-        <div className="install-bar">
-          <i style={{ width: `${overall(job)}%` }} />
-        </div>
-      )}
     </div>
   )
 }
@@ -515,47 +512,28 @@ function SeasonDetail({ season: s, library, reload, back, setArt, cover, go }: D
                 </button>
               )}
               {(s.installed || s.partial) && !here && !s.running && (
-                <ConfirmButton label={t('play.remove')} confirm={t('play.removeConfirm')} onConfirm={remove} />
+                <ConfirmButton
+                  label={t('play.remove')}
+                  title={t('confirm.removeTitle', { season: s.name })}
+                  body={t('confirm.removeBody', { size: `${s.size.toFixed(1)} GB` })}
+                  confirm={t('play.remove')}
+                  cancel={t('play.cancel')}
+                  onConfirm={remove}
+                />
               )}
             </div>
           </div>
         </div>
 
-        <Mods season={s} reload={reload} go={go} fail={fail} />
+        <Mods season={s} go={go} />
       </section>
     </div>
   )
 }
 
-const CHEAT_ENGINE = 'https://cheatengine.org/downloads.php'
-
-function Mods({ season: s, reload, go, fail }: { season: Season; reload: () => void; go: PageProps['go']; fail: (e: Error) => void }) {
+function Mods({ season: s, go }: { season: Season; go: PageProps['go'] }) {
   const { t } = useI18n()
-  const { toast } = useSession()
-  const [busy, setBusy] = useState('')
-  const [progress, setProgress] = useState(0)
-  useEvent<{ key: string; done: number; total: number }>('mods.progress', (d) => d.key === s.key && setProgress(d.total ? d.done / d.total : 0))
-
-  const act = async (what: string, method: string, done: string) => {
-    setBusy(what)
-    setProgress(0)
-    try {
-      await api.call(method, { key: s.key })
-      toast(t(done, { season: s.id }), 'ok')
-      reload()
-    } catch (e) {
-      fail(e as Error)
-    } finally {
-      setBusy('')
-    }
-  }
-  const openTable = async () => {
-    const file = await api.call<string>('mods.table', { key: s.key })
-    const failed = await api.open(file)
-    if (failed) toast(t('mod.table.noCe'), 'info')
-  }
-  const locked = !s.installed || s.running || s.downloading
-
+  const mods = [s.hm && 'Heated Metal', s.table && t('mod.table')].filter(Boolean).join(' · ')
   return (
     <div className="card mods">
       <div className="label">{t('mods.title')}</div>
@@ -575,55 +553,23 @@ function Mods({ season: s, reload, go, fail }: { season: Season; reload: () => v
             </button>
           )}
         </li>
-
-        {s.hm && (
+        {mods && (
           <li>
             <span className="tile-icon">
-              <Flame size={16} strokeWidth={1.8} />
+              <Puzzle size={16} strokeWidth={1.8} />
             </span>
             <div className="grow">
-              <b>
-                Heated Metal <span className="mono dim">{s.hm === 'latest' ? t('mod.latest') : `v${s.hm}`}</span>
-              </b>
-              <small>{t(s.id === 'Y5S3' ? 'mod.hm.bodyTextures' : 'mod.hm.body')}</small>
-              {busy === 'hm' && (
-                <div className="bar thin">
-                  <i style={{ width: `${Math.max(progress * 100, 3)}%` }} />
-                </div>
-              )}
+              <b>{t('mods.workshop')}</b>
+              <small>{mods}</small>
             </div>
-            {s.hmInstalled && <Chip tone="ok">{t('state.installed')}</Chip>}
-            {busy === 'hm' ? (
-              <Spinner />
-            ) : s.hmInstalled ? (
-              <ConfirmButton label={t('mods.remove')} confirm={t('play.removeConfirm')} onConfirm={() => act('hm', 'mods.hm.remove', 'toast.hmRemoved')} />
-            ) : (
-              <button className="btn ghost small" onClick={() => act('hm', 'mods.hm.install', 'toast.hmInstalled')} disabled={locked} data-tip={locked ? t('mods.needsInstall') : undefined}>
-                <DownloadCloud size={14} /> {t('mods.install')}
-              </button>
-            )}
-          </li>
-        )}
-
-        {s.table && (
-          <li>
-            <span className="tile-icon">
-              <Table2 size={16} strokeWidth={1.8} />
-            </span>
-            <div className="grow">
-              <b>{t('mod.table')}</b>
-              <small>{t(`mod.table.${s.id}`)}</small>
-            </div>
-            <a className="link-btn" href={CHEAT_ENGINE} target="_blank" rel="noreferrer">
-              Cheat Engine <ExternalLink size={12} />
-            </a>
-            <button className="btn ghost small" onClick={() => openTable().catch(fail)}>
-              {s.tableInstalled ? <FolderOpen size={14} /> : <DownloadCloud size={14} />} {t(s.tableInstalled ? 'mods.open' : 'mod.table.get')}
+            {s.hmInstalled && <Chip tone="ok">Heated Metal</Chip>}
+            <button className="btn ghost small" onClick={() => go('workshop')}>
+              {t('mods.openWorkshop')} <ArrowRight size={14} />
             </button>
           </li>
         )}
       </ul>
-      {!s.hm && !s.table && <small className="mods-none">{t('mods.none')}</small>}
+      {!mods && <small className="mods-none">{t('mods.none')}</small>}
     </div>
   )
 }

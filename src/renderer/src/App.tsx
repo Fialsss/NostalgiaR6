@@ -1,25 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Copy, House, LibraryBig, LockOpen, Minus, SlidersHorizontal, Square, X } from 'lucide-react'
-import { api } from './api'
-import { Mark, SeasonArt } from './art'
+import { CircleHelp, Copy, ExternalLink, FlaskConical, House, LibraryBig, LockOpen, Minus, Puzzle, SlidersHorizontal, Square, X } from 'lucide-react'
+import { api, type Library as Lib, type Settings as Values } from './api'
+import { Mark, prefetch, SeasonArt, useArtCache } from './art'
 import { useI18n } from './i18n'
 import Home from './pages/Home'
 import Library from './pages/Library'
 import Liberator from './pages/Liberator'
 import Settings from './pages/Settings'
+import Workshop from './pages/Workshop'
 import { AccountPill, JobChip } from './session'
+import Tour from './Tour'
 
-export type Page = 'home' | 'library' | 'liberator' | 'settings'
+export type Page = 'home' | 'library' | 'workshop' | 'liberator' | 'settings'
 export type Art = { seed: number; hue: number; image?: string }
 
 const NAV = [
   ['home', House],
   ['library', LibraryBig],
+  ['workshop', Puzzle],
   ['liberator', LockOpen],
   ['settings', SlidersHorizontal]
 ] as const
 
-type Motion = '' | 'closing' | 'minimizing' | 'settle'
+type Motion = '' | 'closing' | 'settle'
 
 function firstPage(): Page {
   const hash = location.hash.slice(1)
@@ -33,12 +36,36 @@ export default function App() {
   const [motion, setMotion] = useState<Motion>('')
   const [maximized, setMaximized] = useState(false)
   const [focus, setFocus] = useState<string | null>(null)
+  const [tour, setTour] = useState(false)
+  const [notice, setNotice] = useState<Values | null>(null)
+  useArtCache() // pictures switch to their disk copy as soon as it exists
+
+  // First the "in development" notice (once per version), then, on the very first launch only, the guide.
+  // Both are remembered in settings.json, written at once.
+  const startGuide = (s: Values) => {
+    if (s.tour_seen) return
+    setTour(true)
+    api.call('settings.set', { tour_seen: true })
+  }
+  useEffect(() => {
+    api.call<Values>('settings.get').then((s) => (s.notice_seen === __VERSION__ ? startGuide(s) : setNotice(s)))
+  }, [])
+  const readNotice = () => {
+    api.call('settings.set', { notice_seen: __VERSION__ })
+    if (notice) startGuide(notice)
+    setNotice(null)
+  }
+
+  // every season's key art comes down in the background, one at a time: the picker opens full later
+  useEffect(() => {
+    api.call<Lib>('games.list').then((l) => l.seasons.forEach((s) => prefetch(s.key)))
+  }, [])
 
   // The window fades itself; the page adds depth: shrink on exit, settle on return.
   useEffect(
     () =>
       api.onWindow((state) => {
-        if (state === 'closing' || state === 'minimizing') return setMotion(state)
+        if (state === 'closing') return setMotion(state)
         if (state === 'maximize' || state === 'unmaximize') setMaximized(state === 'maximize')
         setMotion('settle')
         setTimeout(() => setMotion(''), 420)
@@ -50,7 +77,7 @@ export default function App() {
     setFocus(key)
     if (key) setPage('library')
   }
-  const shared = { go: setPage, setArt, focus, openSeason }
+  const shared = { go: setPage, setArt, focus, openSeason, startTour: () => setTour(true) }
 
   return (
     <div className={`app ${motion}`}>
@@ -78,6 +105,9 @@ export default function App() {
         </nav>
         <div className="top-right">
           <JobChip onOpen={openSeason} />
+          <button className={`help${tour ? ' active' : ''}`} onClick={() => setTour(true)} data-tip={t('nav.guide')} aria-label={t('nav.guide')}>
+            <CircleHelp size={18} strokeWidth={1.8} />
+          </button>
           <AccountPill />
           <div className="winbtns">
             <button onClick={() => api.window('minimize')} aria-label={t('window.minimize')} data-tip={t('window.minimize')}>
@@ -100,9 +130,30 @@ export default function App() {
       <main className="page" key={page}>
         {page === 'home' && <Home {...shared} />}
         {page === 'library' && <Library {...shared} />}
+        {page === 'workshop' && <Workshop {...shared} />}
         {page === 'liberator' && <Liberator {...shared} />}
         {page === 'settings' && <Settings {...shared} />}
       </main>
+      {tour && <Tour go={setPage} close={() => setTour(false)} />}
+      {notice && (
+        <div className="overlay">
+          <div className="dialog confirm notice-dialog" role="alertdialog" aria-modal="true" aria-label={t('notice.title')}>
+            <span className="confirm-icon notice-icon">
+              <FlaskConical size={22} />
+            </span>
+            <b>{t('notice.title')}</b>
+            <p>{t('notice.body', { version: __VERSION__ })}</p>
+            <div className="confirm-actions">
+              <a className="btn ghost" href="https://github.com/Fialsss/NostalgiaR6/issues" target="_blank" rel="noreferrer">
+                <ExternalLink size={15} /> {t('notice.report')}
+              </a>
+              <button className="btn primary" onClick={readNotice} autoFocus>
+                {t('notice.ok')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -113,4 +164,5 @@ export type PageProps = {
   /** a season the Library should open straight away (null once it has) */
   focus: string | null
   openSeason: (key: string | null) => void
+  startTour: () => void
 }

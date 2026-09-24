@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { AlertTriangle, Trash2, X } from 'lucide-react'
 
 export type Tone = 'ok' | 'warn' | 'bad' | 'info' | 'muted'
@@ -36,24 +37,60 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
   )
 }
 
-/** A destructive action in two clicks: the first arms it (red, "confirm"), the second runs it. */
-export function ConfirmButton({ label, confirm, onConfirm, small = true }: { label: string; confirm: string; onConfirm: () => void; small?: boolean }) {
-  const [armed, setArmed] = useState(false)
+/**
+ * A destructive action that asks first: a small dialog with a red confirm and a cancel.
+ * It opens on document.body: a card's backdrop-filter would otherwise trap a fixed overlay inside the card.
+ */
+export function ConfirmButton(props: {
+  label: string
+  title: string
+  body: string
+  confirm: string
+  cancel: string
+  onConfirm: () => void
+  small?: boolean
+}) {
+  const { label, title, body, confirm, cancel, onConfirm, small = true } = props
+  const [open, setOpen] = useState(false)
   useEffect(() => {
-    if (!armed) return
-    const timer = setTimeout(() => setArmed(false), 3500)
-    return () => clearTimeout(timer)
-  }, [armed])
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    addEventListener('keydown', onKey)
+    return () => removeEventListener('keydown', onKey)
+  }, [open])
   return (
-    <button
-      className={`btn ghost danger${small ? ' small' : ''}${armed ? ' armed' : ''}`}
-      onClick={() => {
-        if (armed) onConfirm()
-        setArmed(!armed)
-      }}
-    >
-      <Trash2 size={14} /> {armed ? confirm : label}
-    </button>
+    <>
+      <button className={`btn ghost danger${small ? ' small' : ''}`} onClick={() => setOpen(true)}>
+        <Trash2 size={14} /> {label}
+      </button>
+      {open &&
+        createPortal(
+          <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
+            <div className="dialog confirm" role="alertdialog" aria-modal="true" aria-label={title}>
+              <span className="confirm-icon">
+                <Trash2 size={22} />
+              </span>
+              <b>{title}</b>
+              <p>{body}</p>
+              <div className="confirm-actions">
+                <button className="btn ghost" autoFocus onClick={() => setOpen(false)}>
+                  {cancel}
+                </button>
+                <button
+                  className="btn danger-fill"
+                  onClick={() => {
+                    setOpen(false)
+                    onConfirm()
+                  }}
+                >
+                  <Trash2 size={15} /> {confirm}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
   )
 }
 

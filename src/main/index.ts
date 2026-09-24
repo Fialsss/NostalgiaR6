@@ -1,16 +1,21 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, shell, Tray } from 'electron'
 import { join } from 'node:path'
+import * as art from './art'
 import * as controls from './controls'
 import * as core from './core'
 import * as games from './games'
 import * as liberator from './liberator'
 import * as steam from './steam'
 
-const METHODS: core.Methods = { ...core.methods, ...steam.methods, ...games.methods, ...liberator.methods, ...controls.methods }
+const METHODS: core.Methods = { ...core.methods, ...steam.methods, ...games.methods, ...liberator.methods, ...controls.methods, ...art.methods }
+
+art.register()
 
 let window: BrowserWindow | undefined
+let tray: Tray | undefined
 let closing = false
-let minimizing = false
+let quitting = false // only a real quit (tray menu) closes the window; the X hides it to the tray
+let hinted = false
 
 const send = (channel: string, value: unknown) => {
   if (window && !window.isDestroyed()) window.webContents.send(channel, value)
@@ -60,26 +65,31 @@ function createWindow(): void {
   })
   win.on('closed', () => (window = undefined))
 
-  // Alt+F4, the taskbar and our own button all come through here: play the exit first.
+  // Alt+F4, the taskbar and our own button all come through here: play the exit, then step into the tray.
+  // Downloads go on meanwhile; Quit in the tray menu is what really closes.
   win.on('close', (event) => {
-    if (closing) return
+    if (quitting) return
     event.preventDefault()
+    if (closing) return
     closing = true
     send('window:state', 'closing')
-    fade(0, 200).then(() => win.destroy())
+    fade(0, 200).then(() => {
+      win.hide()
+      closing = false
+      if (!hinted) tray?.displayBalloon({ title: 'Nostalgia', content: 'Still running here: downloads go on. Right-click the icon to quit.' })
+      hinted = true
+    })
   })
   win.on('maximize', () => send('window:state', 'maximize'))
   win.on('unmaximize', () => send('window:state', 'unmaximize'))
-  win.on('restore', () => {
-    send('window:state', 'restore')
-    fade(1, 240)
-  })
+  // Minimise and restore are Windows' own animations: fading on top of them made them stutter.
   // Safety net: a window that is shown and not on its way out must never stay transparent.
-  const reveal = () => {
-    if (!closing && !minimizing && !win.isMinimized() && win.getOpacity() < 1) fade(1, 160)
+  const opaque = () => {
+    if (!closing && !win.isMinimized() && win.getOpacity() < 1) fade(1, 160)
   }
-  win.on('focus', reveal)
-  win.on('show', reveal)
+  win.on('restore', opaque)
+  win.on('focus', opaque)
+  win.on('show', opaque)
 
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https://')) shell.openExternal(url)
@@ -89,6 +99,38 @@ function createWindow(): void {
   const page = process.env.NOSTALGIA_PAGE ?? ''
   if (process.env.ELECTRON_RENDERER_URL) win.loadURL(`${process.env.ELECTRON_RENDERER_URL}#${page}`)
   else win.loadFile(join(__dirname, '../renderer/index.html'), { hash: page })
+}
+
+/** Back from the tray (or from a second launch of the app). */
+function reveal(): void {
+  const win = window
+  if (!win || win.isDestroyed()) return createWindow()
+  if (win.isMinimized()) win.restore()
+  if (!win.isVisible()) {
+    win.setOpacity(0)
+    win.show()
+    send('window:state', 'restore') // the page settles back in, as after a minimise
+  }
+  win.focus()
+  fade(1, 240)
+}
+
+function trayMenu(): Menu {
+  const last = games.lastPlayable()
+  return Menu.buildFromTemplate([
+    { label: 'Open Nostalgia', click: reveal },
+    ...(last ? [{ label: `Play ${last.id} ${last.name}`, click: () => void Promise.resolve(METHODS['games.launch']({ key: last.key })).catch(reveal) }] : []),
+    { type: 'separator' },
+    { label: 'Quit', click: () => app.quit() }
+  ])
+}
+
+function makeTray(): void {
+  const icon = nativeImage.createFromPath(join(app.getAppPath(), 'resources', 'icon.png')).resize({ width: 32, height: 32 })
+  tray = new Tray(icon)
+  tray.setToolTip('Nostalgia')
+  tray.on('click', reveal)
+  tray.on('right-click', () => tray?.popUpContextMenu(trayMenu()))
 }
 
 // Errors cross IPC as data: a rejected handle() prefixes the message with IPC noise.
@@ -113,24 +155,16 @@ ipcMain.on('window', async (_event, action: 'minimize' | 'maximize' | 'close') =
   if (!window) return
   if (action === 'close') window.close()
   else if (action === 'maximize') window.isMaximized() ? window.unmaximize() : window.maximize()
-  else {
-    // fade out, then minimise invisibly; 'restore' fades back in
-    minimizing = true
-    send('window:state', 'minimizing')
-    await fade(0, 160)
-    window?.minimize()
-    minimizing = false
-  }
+  else window.minimize()
 })
 
 // One window: two copies would run two downloads into the same folders.
 if (!app.requestSingleInstanceLock()) app.quit()
 else {
-  app.on('second-instance', () => {
-    if (window?.isMinimized()) window.restore()
-    window?.focus()
-  })
+  app.on('second-instance', reveal)
   app.whenReady().then(() => {
+    art.serve()
+    makeTray()
     createWindow()
     steam.ensureTool(false).catch(() => undefined) // ready before the first sign-in; offline, that sign-in retries
     liberator.prefetch()
@@ -139,6 +173,7 @@ else {
 app.on('window-all-closed', () => app.quit())
 // the game keeps running; a download or Liberator doesn't outlive the window
 app.on('before-quit', () => {
+  quitting = true
   steam.cancel()
   liberator.stop()
 })

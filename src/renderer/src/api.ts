@@ -30,7 +30,7 @@ export type Season = {
   downloading: boolean
 }
 export type Library = { root: string; free: number; last: { key: string; at: number }; seasons: Season[] }
-export type Settings = { library: string; libraries: string[]; username: string; steam_user: string; liberator: boolean; last_played: string; last_played_at: number }
+export type Settings = { library: string; libraries: string[]; username: string; steam_user: string; liberator: boolean; last_played: string; last_played_at: number; tour_seen: boolean; notice_seen: string }
 
 /** Subscribe to one event from the main process for the lifetime of the component. */
 export function useEvent<T>(name: string, listener: (data: T) => void): void {
