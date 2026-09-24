@@ -74,10 +74,10 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "artifactName": "Nostalgia-Setup-${version}.exe"
+      "artifactName": "Nostalgia-${version}-Windows-x64-Setup.exe"
     },
     "portable": {
-      "artifactName": "Nostalgia-${version}-portable.exe"
+      "artifactName": "Nostalgia-${version}-Windows-x64-Portable.exe"
     }
   }
 }
