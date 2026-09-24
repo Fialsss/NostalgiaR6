@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronRight, CircleHelp, DownloadCloud, ExternalLink, FolderOpen, HardDrive, Info, LogIn, LogOut, Mouse, Save, UserRound, Wrench } from 'lucide-react'
+import { ChevronRight, CircleHelp, Coffee, DownloadCloud, ExternalLink, FolderOpen, HardDrive, Info, LogIn, LogOut, Mouse, Save, UserRound, Wrench } from 'lucide-react'
 import type { PageProps } from '../App'
 import { api, bytes, useLibrary, type Settings as Values } from '../api'
 import { Mark } from '../art'
@@ -8,6 +8,7 @@ import { Avatar, useSession } from '../session'
 import { PageHead, Segmented, Spinner, Switch } from '../ui'
 
 const REPO = 'https://github.com/Fialsss/NostalgiaR6'
+const KOFI = 'https://ko-fi.com/fialss'
 const NAME = /^[A-Za-z0-9_.-]{0,16}$/
 
 const SECTIONS = [
@@ -270,6 +271,9 @@ export default function Settings({ setArt, startTour }: PageProps) {
                   <b>Nostalgia</b>
                   <small className="mono">v{__VERSION__} · GPL-3.0 · © 2026 Fialsss</small>
                 </div>
+                <a className="btn primary small" href={KOFI} target="_blank" rel="noreferrer">
+                  <Coffee size={14} /> {t('about.support')}
+                </a>
                 <a className="btn ghost small" href={REPO} target="_blank" rel="noreferrer">
                   <ExternalLink size={14} /> GitHub
                 </a>

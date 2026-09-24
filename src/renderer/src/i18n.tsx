@@ -320,6 +320,7 @@ const en: Record<string, string> = {
   'credit.Heated Metal': 'DataCluster0 · SDK for Year 5 builds. MIT.',
   'credit.Throwback FAQ': 'Xeralin · the Cheat Engine tables.',
   'credit.DepotDownloader': 'SteamRE · downloads from Steam. GPL-2.0.',
+  'about.support': 'Support on Ko-fi',
   'about.body':
     "Not affiliated with Ubisoft or Valve. Rainbow Six Siege belongs to Ubisoft and you need to own it on Steam. Season key art is Throwback Launcher's set, loaded when shown; it isn't part of this app.",
 
@@ -703,6 +704,7 @@ const it: Record<string, string> = {
   'credit.Heated Metal': "DataCluster0 · SDK per le build dell'anno 5. MIT.",
   'credit.Throwback FAQ': 'Xeralin · le tabelle di Cheat Engine.',
   'credit.DepotDownloader': 'SteamRE · scarica da Steam. GPL-2.0.',
+  'about.support': 'Sostienimi su Ko-fi',
   'about.body':
     'Non affiliato a Ubisoft né a Valve. Rainbow Six Siege appartiene a Ubisoft e devi possederlo su Steam. Le key art delle stagioni sono quelle di Throwback Launcher, caricate quando servono; non fanno parte di questa app.',
 
