@@ -10,6 +10,7 @@
     <img src="https://img.shields.io/badge/early%20preview-ffb347?style=for-the-badge" alt="Early preview" />
     <img src="https://img.shields.io/badge/GPL--3.0%20%2B%20attribution-3ddc97?style=for-the-badge" alt="GPL-3.0 with attribution" />
     <a href="https://ko-fi.com/fialss"><img src="https://img.shields.io/badge/Ko--fi-support-ff5e5b?style=for-the-badge&logo=kofi&logoColor=white" alt="Support on Ko-fi" /></a>
+    <a href="https://discord.gg/uWma5sfQAK"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join the Discord" /></a>
   </p>
   <img src="docs/nostalgia.gif" width="820" alt="Nostalgia: home, library, season picker, Workshop and Liberator" />
 </div>
