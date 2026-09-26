@@ -6,8 +6,10 @@ import * as core from './core'
 import * as games from './games'
 import * as liberator from './liberator'
 import * as steam from './steam'
+import * as tools from './tools'
+import * as updater from './updater'
 
-const METHODS: core.Methods = { ...core.methods, ...steam.methods, ...games.methods, ...liberator.methods, ...controls.methods, ...art.methods }
+const METHODS: core.Methods = { ...core.methods, ...steam.methods, ...games.methods, ...liberator.methods, ...controls.methods, ...art.methods, ...updater.methods }
 
 art.register()
 
@@ -158,9 +160,10 @@ ipcMain.on('window', async (_event, action: 'minimize' | 'maximize' | 'close') =
   else window.minimize()
 })
 
-// One window: two copies would run two downloads into the same folders.
-if (!app.requestSingleInstanceLock()) app.quit()
-else {
+// One window: two copies would run two downloads into the same folders. Right after an update, the old copy
+// is still closing and holds the lock: wait for it first.
+updater.takeOver().then(() => {
+  if (!app.requestSingleInstanceLock()) return app.quit()
   app.on('second-instance', reveal)
   app.whenReady().then(() => {
     art.serve()
@@ -168,8 +171,9 @@ else {
     createWindow()
     steam.ensureTool(false).catch(() => undefined) // ready before the first sign-in; offline, that sign-in retries
     liberator.prefetch()
+    tools.start()
   })
-}
+})
 app.on('window-all-closed', () => app.quit())
 // the game keeps running; a download or Liberator doesn't outlive the window
 app.on('before-quit', () => {

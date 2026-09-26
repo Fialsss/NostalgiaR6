@@ -1,4 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
+import de from './locales/de'
+import es from './locales/es'
+import fr from './locales/fr'
+import pl from './locales/pl'
+import pt from './locales/pt'
+import ru from './locales/ru'
 
 const en: Record<string, string> = {
   'brand.tag': 'Siege, as it was',
@@ -369,6 +375,7 @@ const en: Record<string, string> = {
   'toast.hmRemoved': 'Heated Metal removed from {season}',
   'toast.nameSaved': 'In-game name saved',
   'toast.toolReady': '{tool} is ready',
+  'toast.toolUpdated': '{tool} updated to {version}',
   'toast.signedOut': 'Signed out of Steam',
   'toast.welcome': 'Signed in as {name}',
 
@@ -381,7 +388,33 @@ const en: Record<string, string> = {
   'error.wrongPassword': 'Wrong account name or password.',
   'error.rateLimit': 'Too many attempts. Wait a few minutes and try again.',
   'error.notOwned': "This Steam account doesn't own Rainbow Six Siege.",
-  'error.missingPassword': 'Enter your password.'
+  'error.missingPassword': 'Enter your password.',
+  'lang.title': 'Choose your language',
+  'lang.body': 'You can change it any time from your profile or in Settings.',
+  'lang.continue': 'Continue',
+  'splash.start': 'Starting',
+  'splash.library': 'Reading your library',
+  'splash.ready': 'Ready',
+  'update.title': 'Update available',
+  'update.body': 'Nostalgia {version} is out. It installs in a minute and your seasons stay where they are.',
+  'update.now': 'Update now',
+  'update.later': 'Later',
+  'update.menu': 'Update ({version})',
+  'update.latest': 'Latest',
+  'update.version': 'Version {version}',
+  'update.downloading': 'Downloading the update… {percent}%',
+  'update.restarting': 'Installed: Nostalgia is restarting',
+  'update.github': 'Download from GitHub',
+  'update.none': 'You already have the latest version.',
+  'update.dev': 'This copy runs from the source code: update it with git.',
+  'update.damaged': 'The download came out damaged. Try again.',
+  'changelog.title': "What's new",
+  'changelog.open': 'Changelog',
+  'changelog.current': 'Installed',
+  'changelog.new': 'New',
+  'changelog.english': 'Release notes are written in English.',
+  'changelog.offline': "Can't reach GitHub right now. Try again later.",
+  'changelog.loading': 'Loading the release notes…'
 }
 
 const it: Record<string, string> = {
@@ -753,6 +786,7 @@ const it: Record<string, string> = {
   'toast.hmRemoved': 'Heated Metal rimosso da {season}',
   'toast.nameSaved': 'Nome in gioco salvato',
   'toast.toolReady': '{tool} è pronto',
+  'toast.toolUpdated': '{tool} aggiornato alla {version}',
   'toast.signedOut': 'Uscito da Steam',
   'toast.welcome': 'Accesso come {name}',
 
@@ -765,30 +799,75 @@ const it: Record<string, string> = {
   'error.wrongPassword': 'Nome account o password errati.',
   'error.rateLimit': 'Troppi tentativi. Aspetta qualche minuto e riprova.',
   'error.notOwned': 'Questo account Steam non possiede Rainbow Six Siege.',
-  'error.missingPassword': 'Inserisci la password.'
+  'error.missingPassword': 'Inserisci la password.',
+  'lang.title': 'Scegli la lingua',
+  'lang.body': 'Puoi cambiarla quando vuoi dal profilo o nelle Impostazioni.',
+  'lang.continue': 'Continua',
+  'splash.start': 'Avvio',
+  'splash.library': 'Lettura della libreria',
+  'splash.ready': 'Pronto',
+  'update.title': 'Aggiornamento disponibile',
+  'update.body': 'È uscito Nostalgia {version}. Si installa in un minuto e le tue stagioni restano dove sono.',
+  'update.now': 'Aggiorna ora',
+  'update.later': 'Più tardi',
+  'update.menu': 'Aggiorna ({version})',
+  'update.latest': 'Ultima versione',
+  'update.version': 'Versione {version}',
+  'update.downloading': "Download dell'aggiornamento… {percent}%",
+  'update.restarting': 'Installato: Nostalgia si sta riavviando',
+  'update.github': 'Scarica da GitHub',
+  'update.none': "Hai già l'ultima versione.",
+  'update.dev': 'Questa copia gira dal codice sorgente: aggiornala con git.',
+  'update.damaged': 'Il download è arrivato danneggiato. Riprova.',
+  'changelog.title': 'Novità',
+  'changelog.open': 'Registro modifiche',
+  'changelog.current': 'Installata',
+  'changelog.new': 'Nuova',
+  'changelog.english': 'Le note di rilascio sono scritte in inglese.',
+  'changelog.offline': 'GitHub non è raggiungibile ora. Riprova più tardi.',
+  'changelog.loading': 'Caricamento delle note di rilascio…'
 }
 
-export type Lang = 'en' | 'it'
-const DICTIONARIES: Record<Lang, Record<string, string>> = { en, it }
+// Each language names itself: the first-run picker shows them before anything is translated.
+export const LANGS = [
+  ['en', 'English'],
+  ['it', 'Italiano'],
+  ['fr', 'Français'],
+  ['es', 'Español'],
+  ['de', 'Deutsch'],
+  ['pt', 'Português (BR)'],
+  ['pl', 'Polski'],
+  ['ru', 'Русский']
+] as const
+export type Lang = (typeof LANGS)[number][0]
+const DICTIONARIES: Record<Lang, Record<string, string>> = { en, it, fr, es, de, pt, pl, ru }
+const known = (code: string | null | undefined): code is Lang => LANGS.some(([id]) => id === code)
 
-type I18n = { lang: Lang; setLang: (lang: Lang) => void; t: (key: string, vars?: Record<string, string | number>) => string }
+type I18n = { lang: Lang; setLang: (lang: Lang) => void; chosen: boolean; t: (key: string, vars?: Record<string, string | number>) => string }
 const Context = createContext<I18n | null>(null)
 
-// English first; Italian is one click away in the account menu and in Settings
-function initialLang(): Lang {
+function saved(): Lang | null {
   try {
-    const saved = localStorage.getItem('lang')
-    if (saved === 'en' || saved === 'it') return saved
+    const value = localStorage.getItem('lang')
+    return known(value) ? value : null
   } catch {
-    // storage unavailable: English
+    return null // storage unavailable: the picker asks again
   }
-  return 'en'
+}
+
+// Until someone picks, the system's language when there is one, English otherwise
+const guess = (): Lang => {
+  const system = navigator.language.slice(0, 2)
+  return known(system) ? system : 'en'
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(initialLang)
+  const [lang, setLangState] = useState<Lang>(() => saved() ?? guess())
+  const [chosen, setChosen] = useState(() => saved() !== null)
   const setLang = (next: Lang) => {
     setLangState(next)
+    setChosen(true)
+    document.documentElement.lang = next
     try {
       localStorage.setItem('lang', next)
     } catch {
@@ -799,7 +878,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const text = DICTIONARIES[lang][key] ?? en[key] ?? key
     return vars ? text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? '')) : text
   }
-  return <Context.Provider value={{ lang, setLang, t }}>{children}</Context.Provider>
+  return <Context.Provider value={{ lang, setLang, chosen, t }}>{children}</Context.Provider>
 }
 
 export function useI18n(): I18n {

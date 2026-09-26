@@ -4,7 +4,7 @@
  * the game; DepotDownloader asks for them by manifest ID.
  */
 import { spawn, type ChildProcess } from 'node:child_process'
-import { existsSync, globSync, readFileSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, globSync, readFileSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 import { inflateRawSync } from 'node:zlib'
 import { emit, HOME, settings, TOOLS, update, type Methods } from './core'
@@ -30,24 +30,34 @@ export function tool(): { ok: boolean; path: string } {
   return { ok: existsSync(TOOL), path: TOOL }
 }
 
-/** DepotDownloader (about 30 MB), fetched once. Its folder never moves: Steam's saved login is tied to it. */
-export function ensureTool(announce = true): Promise<string> {
-  if (existsSync(TOOL)) return Promise.resolve(TOOL)
-  if (announce) emit('steam.status', { key: 'tool' })
+/**
+ * DepotDownloader (about 30 MB), from its latest release. Its folder never moves and is overwritten in place,
+ * never emptied: Steam's saved login is tied to it.
+ */
+function fetchTool(): Promise<string> {
   fetching ??= (async () => {
     const zip = join(TOOLS, 'DepotDownloader.zip')
     const part = join(TOOLS, 'DepotDownloader.part')
     await download(TOOL_URL, zip)
     rmSync(part, { recursive: true, force: true })
     await unpack(zip, part)
-    rmSync(dirname(TOOL), { recursive: true, force: true })
-    renameSync(part, dirname(TOOL))
+    if (!existsSync(join(part, basename(TOOL)))) throw new Error('DepotDownloader.exe is missing from the downloaded release')
+    cpSync(part, dirname(TOOL), { recursive: true, force: true })
+    rmSync(part, { recursive: true, force: true })
     rmSync(zip, { force: true })
-    if (!existsSync(TOOL)) throw new Error('DepotDownloader.exe is missing from the downloaded release')
     return TOOL
   })().finally(() => (fetching = null))
   return fetching
 }
+
+export function ensureTool(announce = true): Promise<string> {
+  if (existsSync(TOOL)) return Promise.resolve(TOOL)
+  if (announce) emit('steam.status', { key: 'tool' })
+  return fetchTool()
+}
+
+/** A newer release over the old one: never while a download or sign-in is using it. */
+export const refreshTool = () => exclusive(fetchTool)
 
 // --------------------------------------------------------------- one job
 

@@ -29,9 +29,11 @@ let timer: NodeJS.Timeout | undefined
 let delay = FIRST_TRY
 
 export const available = () => existsSync(EXE)
+/** attached to a game: its exe is in use */
+export const busy = () => !!proc
 const snapshot = () => ({ ...state, available: available(), enabled: settings().liberator, game })
 
-async function fetchExe() {
+export async function fetchExe() {
   const exe = await zipEntry(RUNTIME, 'Liberator.exe')
   mkdirSync(TOOLS, { recursive: true })
   writeFileSync(`${EXE}.part`, exe)

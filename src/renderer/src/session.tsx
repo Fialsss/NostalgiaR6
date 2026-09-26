@@ -10,6 +10,7 @@ import {
   FolderOpen,
   Info,
   LogIn,
+  Languages,
   LogOut,
   Mail,
   ShieldCheck,
@@ -17,8 +18,11 @@ import {
   X
 } from 'lucide-react'
 import { api, useEvent, type Settings } from './api'
-import { useI18n, type Lang } from './i18n'
+import { Flag } from './flags'
+import { useI18n } from './i18n'
+import { LanguageGrid } from './Start'
 import { Segmented, Spinner, type Tone } from './ui'
+import { UpdateMenuItems, useUpdates } from './update'
 
 export type Profile = { user: string; steamid: string; name: string; avatar: string }
 /** A season downloading: depot `step` of `steps` (the last step installs the loader). */
@@ -167,6 +171,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     toast(t('workshop.installed', { mod: d.mod === 'hm' ? 'Heated Metal' : t('mod.table'), season: seasonId(d.key) }), 'ok')
   )
   useEvent<{ error: string }>('mods.failed', (d) => toast(t(d.error), 'bad'))
+  useEvent<{ tool: string; version: string }>('tools.updated', (d) => toast(t('toast.toolUpdated', d), 'ok'))
   useEvent<{ key: string } | null>('games.running', (d) => {
     setPlaying(d?.key ?? null)
     if (d) api.window('minimize') // the game takes the screen: step aside to the taskbar
@@ -453,9 +458,11 @@ export function Avatar({ profile, size = 30 }: { profile: Profile | null; size?:
 
 /** The pill in the top bar: sign-in button, or the Steam profile with its menu. */
 export function AccountPill() {
-  const { t, lang, setLang } = useI18n()
+  const { t } = useI18n()
   const { profile, arrived, signIn, signOut } = useSession()
+  const { info } = useUpdates()
   const [open, setOpen] = useState(false)
+  const [languages, setLanguages] = useState(false)
   const menu = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -470,29 +477,49 @@ export function AccountPill() {
     }
   }, [open])
 
-  if (!profile) {
-    return (
-      <button className="account signin" onClick={signIn} data-tip={t('account.signIn')}>
-        <LogIn size={16} /> {t('check.signIn')}
-      </button>
-    )
-  }
-
   const openLibrary = async () => api.open((await api.call<Settings>('settings.get')).library)
 
   return (
     <div className="account-wrap" ref={menu}>
-      <button className={`account${open ? ' open' : ''}${arrived ? ' arrived' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open}>
-        <span className="avatar-dot">
-          <Avatar profile={profile} />
-        </span>
-        <span className="account-text">
-          <b>{profile.name}</b>
-          <small>Steam</small>
-        </span>
+      {/* signed out, the same menu opens (language, updates) with Sign in on top */}
+      <button className={`account${profile ? '' : ' signin'}${open ? ' open' : ''}${arrived ? ' arrived' : ''}`} onClick={() => setOpen(!open)} aria-expanded={open}>
+        {profile ? (
+          <>
+            <span className="avatar-dot">
+              <Avatar profile={profile} />
+              {info?.available && <i className="update-dot" />}
+            </span>
+            <span className="account-text">
+              <b>{profile.name}</b>
+              <small>Steam</small>
+            </span>
+          </>
+        ) : (
+          <span className="signin-icon">
+            <LogIn size={16} />
+            {info?.available && <i className="update-dot" />}
+          </span>
+        )}
+        {!profile && t('check.signIn')}
         <ChevronDown size={15} className="chev" />
       </button>
-      {open && (
+      {open && !profile && (
+        <div className="menu" role="menu">
+          <button
+            className="menu-item signin-item"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+              signIn()
+            }}
+          >
+            <LogIn size={15} /> {t('account.signIn')}
+          </button>
+          <LanguageMenu open={languages} toggle={() => setLanguages(!languages)} />
+          <UpdateMenuItems close={() => setOpen(false)} />
+        </div>
+      )}
+      {open && profile && (
         <div className="menu" role="menu">
           <div className="menu-head">
             <Avatar profile={profile} size={46} />
@@ -510,10 +537,8 @@ export function AccountPill() {
           <button className="menu-item" role="menuitem" onClick={openLibrary}>
             <FolderOpen size={15} /> {t('account.library')}
           </button>
-          <div className="menu-row">
-            <span>{t('setting.language')}</span>
-            <Segmented<Lang> value={lang} onChange={setLang} options={[['it', 'IT'], ['en', 'EN']]} />
-          </div>
+          <LanguageMenu open={languages} toggle={() => setLanguages(!languages)} />
+          <UpdateMenuItems close={() => setOpen(false)} />
           <button
             className="menu-item danger"
             role="menuitem"
@@ -527,6 +552,21 @@ export function AccountPill() {
         </div>
       )}
     </div>
+  )
+}
+
+function LanguageMenu({ open, toggle }: { open: boolean; toggle: () => void }) {
+  const { t, lang } = useI18n()
+  return (
+    <>
+      <button className={`menu-item${open ? ' open' : ''}`} role="menuitem" onClick={toggle} aria-expanded={open}>
+        <Languages size={15} />
+        <span className="grow">{t('setting.language')}</span>
+        <Flag lang={lang} size={20} />
+        <ChevronDown size={14} className="chev" />
+      </button>
+      {open && <LanguageGrid compact onPick={toggle} />}
+    </>
   )
 }
 

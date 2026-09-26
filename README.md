@@ -53,6 +53,8 @@
 - **Liberator.** Fetched on its own and attached to the running game: pick the playlist and the rules from the app.
 - **Workshop.** Heated Metal for the Year 5 builds, Cheat Engine tables for Terrorist Hunt, more as the community makes them.
 - **One sensitivity everywhere.** Take your sensitivity from any Siege profile on the PC, the current game included, and every season gets the settings it has.
+- **Keeps itself up to date.** A new Nostalgia installs in a click, Setup or Portable, with its changelog in the app. DepotDownloader, ThrowbackLoader, Liberator, Heated Metal and the tables follow their latest releases by themselves.
+- **Eight languages.** English, Italiano, Français, Español, Deutsch, Português (BR), Polski and Русский, picked on the first launch.
 - **Stays out of the way.** Closing keeps it in the tray while downloads go on; starting a season steps the window aside.
 
 Season folders use Operation Throwback's names (`Y5S3_ShadowLegacy`), so a folder of seasons from Throwback Launcher is recognised as it is.

@@ -1,6 +1,6 @@
 {
   "name": "nostalgia",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Download, mod and launch past seasons of Rainbow Six Siege from one window.",
   "license": "GPL-3.0-or-later",
@@ -10,7 +10,7 @@
     "build": "electron-vite build",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/main/ini.test.ts",
+    "test": "node --test src/main/ini.test.ts src/main/net.test.ts",
     "dist": "electron-vite build && electron-builder --win"
   },
   "dependencies": {

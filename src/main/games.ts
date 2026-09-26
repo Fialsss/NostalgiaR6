@@ -94,9 +94,13 @@ function list() {
 
 // ------------------------------------------------------------ ThrowbackLoader
 
-/** The loader that stands in for Ubisoft Connect in old builds, fetched once from its releases. */
+/** The loader that stands in for Ubisoft Connect in old builds, from its latest release. */
 async function ensureLoader(): Promise<string> {
   if ([...LOADER_DLLS, CONFIG, LAUNCHER].every((f) => existsSync(join(LOADER, f)))) return LOADER
+  return fetchLoader()
+}
+
+export async function fetchLoader(): Promise<string> {
   const { url } = await asset('xeralin/ThrowbackLoader', (n) => n.endsWith('.zip'))
   const zip = `${LOADER}.zip`
   const part = `${LOADER}.part`
@@ -204,7 +208,8 @@ async function launch({ key }: { key: string }) {
   const s = find(key)
   const dir = folder(s)
   if (!existsSync(join(dir, LAUNCHER))) throw new Error('error.notInstalled')
-  writeName(dir)
+  // the loader's files again, so an updated loader reaches seasons installed before it (offline: the ones there)
+  await applyLoader(dir).catch(() => writeName(dir))
   controls.onLaunch(key)
   // LaunchR6 starts the game with the loader's arguments and waits for it, so its life is the game's.
   // Heated Metal starts from the game's own exe, with its own DefaultArgs.dll.
@@ -304,8 +309,26 @@ async function getTable({ key }: { key: string }) {
   return tableFile(s)
 }
 
+/** Nothing running and nothing downloading: tools and mods can be swapped. */
+export const idle = () => !job && !running
+
+/** Seasons with Heated Metal that follow its latest release, and the version they have. */
+export function hmFollowing(): { key: string; version: string }[] {
+  return SEASONS.filter((s) => s.hm === 'latest')
+    .map((s) => ({ key: s.key, file: join(folder(s as Season), HM, '.version') }))
+    .filter((s) => existsSync(s.file))
+    .map((s) => ({ key: s.key, version: readFileSync(s.file, 'utf8').trim() }))
+}
+
+/** Tables already saved, fetched again: the FAQ keeps improving them. */
+export async function refreshTables(): Promise<void> {
+  for (const s of SEASONS as Season[]) if (s.table && existsSync(tableFile(s))) await download(TABLES + s.table, tableFile(s)).catch(() => undefined)
+}
+
+export { installHm }
+
 /** What's been fetched so far: every tool downloads itself when first needed anyway. */
-function tools() {
+export function tools() {
   return { depot: tool().ok, loader: existsSync(join(LOADER, LAUNCHER)), liberator: liberator.available() }
 }
 

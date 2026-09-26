@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { ChevronRight, CircleHelp, Coffee, DownloadCloud, ExternalLink, FolderOpen, HardDrive, Info, LogIn, LogOut, Mouse, Save, UserRound, Wrench } from 'lucide-react'
+import { ArrowUpCircle, ChevronRight, CircleHelp, Coffee, DownloadCloud, ExternalLink, FolderOpen, HardDrive, Info, LogIn, LogOut, Mouse, Save, ScrollText, UserRound, Wrench } from 'lucide-react'
 import type { PageProps } from '../App'
 import { api, bytes, useLibrary, type Settings as Values } from '../api'
 import { Mark } from '../art'
-import { useI18n, type Lang } from '../i18n'
+import { useI18n } from '../i18n'
 import { Avatar, useSession } from '../session'
-import { PageHead, Segmented, Spinner, Switch } from '../ui'
+import { LanguageGrid } from '../Start'
+import { PageHead, Spinner, Switch } from '../ui'
+import { useUpdates } from '../update'
 
 const REPO = 'https://github.com/Fialsss/NostalgiaR6'
 const KOFI = 'https://ko-fi.com/fialss'
@@ -36,7 +38,8 @@ type Preset = { from: string; at: number; values: Record<string, string>; auto: 
 type Profile = { id: string; season: string; modified: number; keys: number }
 
 export default function Settings({ setArt, startTour }: PageProps) {
-  const { t, lang, setLang } = useI18n()
+  const { t } = useI18n()
+  const { info, phase, install, showLog } = useUpdates()
   const { profile, signIn, signOut, toast } = useSession()
   const [library, reload] = useLibrary()
   const [values, setValues] = useState<Values | null>(null)
@@ -162,7 +165,7 @@ export default function Settings({ setArt, startTour }: PageProps) {
                   <small>{t('setting.language.hint')}</small>
                 </div>
                 <div className="setting-control">
-                  <Segmented<Lang> value={lang} onChange={setLang} options={[['it', 'Italiano'], ['en', 'English']]} />
+                  <LanguageGrid />
                 </div>
               </div>
             </>
@@ -277,6 +280,25 @@ export default function Settings({ setArt, startTour }: PageProps) {
                 <a className="btn ghost small" href={REPO} target="_blank" rel="noreferrer">
                   <ExternalLink size={14} /> GitHub
                 </a>
+              </div>
+              <div className="setting">
+                <div className="setting-label">
+                  <b>{t('update.version', { version: __VERSION__ })}</b>
+                  <small>{info?.available ? t('update.body', { version: info.latest }) : info ? t('update.none') : ''}</small>
+                </div>
+                <div className="setting-control row">
+                  <button className="btn ghost small" onClick={() => showLog()}>
+                    <ScrollText size={14} /> {t('changelog.open')}
+                  </button>
+                  {info?.available ? (
+                    <button className="btn primary small" onClick={install} disabled={phase.state === 'downloading' || phase.state === 'restarting'}>
+                      <ArrowUpCircle size={14} />
+                      {phase.state === 'downloading' ? `${phase.percent.toFixed(0)}%` : t('update.menu', { version: info.latest })}
+                    </button>
+                  ) : (
+                    info && <span className="chip ok dot">{t('update.latest')}</span>
+                  )}
+                </div>
               </div>
               {CREDITS.map(([name, url]) => (
                 <div key={name} className="setting credit">

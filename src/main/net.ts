@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { createWriteStream } from 'node:fs'
-import { mkdir, rename } from 'node:fs/promises'
+import { mkdir, rename, stat } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
@@ -21,15 +21,24 @@ export async function json<T>(url: string): Promise<T> {
 
 /** Save a URL to a file. It's written aside first, so a cut download never looks complete. */
 export async function download(url: string, file: string, progress?: (done: number, total: number) => void): Promise<void> {
+  // before the body is touched: a 'data' listener starts it flowing, and chunks sent during an await were lost
+  await mkdir(dirname(file), { recursive: true })
   const response = await fetch(url, { headers: AGENT })
   if (!response.ok || !response.body) throw failed(url, response.status)
   const total = Number(response.headers.get('content-length')) || 0
   const body = Readable.fromWeb(response.body as import('node:stream/web').ReadableStream)
   let done = 0
   if (progress) body.on('data', (chunk: Buffer) => progress((done += chunk.length), total))
-  await mkdir(dirname(file), { recursive: true })
   await pipeline(body, createWriteStream(`${file}.part`))
+  if (total && (await stat(`${file}.part`)).size !== total) throw new Error(`${new URL(url).host}: download cut short`)
   await rename(`${file}.part`, file)
+}
+
+/** a > b, for x.y.z versions (a leading v is fine) */
+export function newer(a: string, b: string): boolean {
+  const [x, y] = [a, b].map((v) => v.replace(/^v/, '').split('.').map((n) => parseInt(n) || 0))
+  for (let i = 0; i < 3; i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) > (y[i] ?? 0)
+  return false
 }
 
 type Release = { tag_name: string; assets: { name: string; browser_download_url: string }[] }
