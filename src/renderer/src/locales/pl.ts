@@ -320,6 +320,9 @@ const pl: Record<string, string> = {
   'credit.Throwback FAQ': 'Xeralin · tabele Cheat Engine.',
   'credit.DepotDownloader': 'SteamRE · pobieranie ze Steama. GPL-2.0.',
   'about.support': 'Wesprzyj na Ko-fi',
+  'discord.join': 'Dołącz do Discorda',
+  'discord.title': 'Społeczność na Discordzie',
+  'discord.hint': 'Pomoc, zgłaszanie błędów i nowości o kolejnych wersjach.',
   'about.body':
     'Aplikacja nie jest powiązana z Ubisoftem ani z Valve. Rainbow Six Siege należy do Ubisoftu i musisz mieć tę grę na Steamie. Grafiki sezonów pochodzą z zestawu Throwback Launchera i są wczytywane przy wyświetlaniu; nie są częścią tej aplikacji.',
 

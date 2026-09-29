@@ -320,6 +320,9 @@ const de: Record<string, string> = {
   'credit.Throwback FAQ': 'Xeralin · die Cheat-Engine-Tabellen.',
   'credit.DepotDownloader': 'SteamRE · lädt von Steam herunter. GPL-2.0.',
   'about.support': 'Auf Ko-fi unterstützen',
+  'discord.join': 'Discord beitreten',
+  'discord.title': 'Community auf Discord',
+  'discord.hint': 'Hilfe, Fehlermeldungen und News zu neuen Versionen.',
   'about.body':
     'Nicht mit Ubisoft oder Valve verbunden. Rainbow Six Siege gehört Ubisoft, und du musst es auf Steam besitzen. Die Key-Art der Seasons stammt aus dem Set von Throwback Launcher und wird erst beim Anzeigen geladen; sie ist nicht Teil dieser App.',
 

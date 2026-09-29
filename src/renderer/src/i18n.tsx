@@ -213,12 +213,17 @@ const en: Record<string, string> = {
   'liberator.about.none': 'This build is newer than Liberator supports.',
   'liberator.state.off': 'Off',
   'liberator.state.missing': 'Not downloaded',
+  'liberator.state.blocked': 'Blocked by Windows',
+
   'liberator.state.attached': 'Attached',
   'liberator.state.waiting': 'Waiting for the game',
   'liberator.state.idle': 'Ready',
   'liberator.getTitle': "Liberator isn't downloaded yet",
   'liberator.getBody': 'Taken from the latest Throwback Launcher release, by Xeralin. About 0.5 MB.',
   'liberator.get': 'Download Liberator',
+  'liberator.blockedTitle': 'Windows would not start Liberator',
+  'liberator.blockedBody': 'The file is there but the system refused to run it ({code}). It is almost always an antivirus: allow Liberator.exe in the Nostalgia tools folder, then start a season again.',
+
   'liberator.fetched': 'Liberator is ready',
   'liberator.idleTitle': 'No season running',
   'liberator.idleBody': 'Launch a supported season: the controls show up here as soon as Liberator attaches.',
@@ -327,6 +332,9 @@ const en: Record<string, string> = {
   'credit.Throwback FAQ': 'Xeralin · the Cheat Engine tables.',
   'credit.DepotDownloader': 'SteamRE · downloads from Steam. GPL-2.0.',
   'about.support': 'Support on Ko-fi',
+  'discord.join': 'Join the Discord',
+  'discord.title': 'Community on Discord',
+  'discord.hint': 'Help, bug reports and news on new versions.',
   'about.body':
     "Not affiliated with Ubisoft or Valve. Rainbow Six Siege belongs to Ubisoft and you need to own it on Steam. Season key art is Throwback Launcher's set, loaded when shown; it isn't part of this app.",
 
@@ -624,12 +632,16 @@ const it: Record<string, string> = {
   'liberator.about.none': 'Questa build è più recente di quelle supportate da Liberator.',
   'liberator.state.off': 'Spento',
   'liberator.state.missing': 'Da scaricare',
+  'liberator.state.blocked': 'Bloccato da Windows',
+
   'liberator.state.attached': 'Collegato',
   'liberator.state.waiting': 'In attesa del gioco',
   'liberator.state.idle': 'Pronto',
   'liberator.getTitle': 'Liberator non è ancora scaricato',
   'liberator.getBody': "Preso dall'ultima versione di Throwback Launcher, di Xeralin. Circa 0,5 MB.",
   'liberator.get': 'Scarica Liberator',
+  'liberator.blockedTitle': 'Windows non ha avviato Liberator',
+  'liberator.blockedBody': "Il file c'e' ma il sistema si e' rifiutato di eseguirlo ({code}). Quasi sempre e' l'antivirus: consenti Liberator.exe nella cartella strumenti di Nostalgia, poi riavvia una stagione.",
   'liberator.fetched': 'Liberator è pronto',
   'liberator.idleTitle': 'Nessuna stagione in gioco',
   'liberator.idleBody': 'Avvia una stagione supportata: i comandi compaiono qui appena Liberator si collega.',
@@ -738,6 +750,9 @@ const it: Record<string, string> = {
   'credit.Throwback FAQ': 'Xeralin · le tabelle di Cheat Engine.',
   'credit.DepotDownloader': 'SteamRE · scarica da Steam. GPL-2.0.',
   'about.support': 'Sostienimi su Ko-fi',
+  'discord.join': 'Entra nel Discord',
+  'discord.title': 'Community su Discord',
+  'discord.hint': 'Aiuto, segnalazioni di bug e novità sulle nuove versioni.',
   'about.body':
     'Non affiliato a Ubisoft né a Valve. Rainbow Six Siege appartiene a Ubisoft e devi possederlo su Steam. Le key art delle stagioni sono quelle di Throwback Launcher, caricate quando servono; non fanno parte di questa app.',
 

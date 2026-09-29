@@ -21,7 +21,7 @@ import { api, useEvent, type Settings } from './api'
 import { Flag } from './flags'
 import { useI18n } from './i18n'
 import { LanguageGrid } from './Start'
-import { Segmented, Spinner, type Tone } from './ui'
+import { DISCORD, DiscordIcon, Segmented, Spinner, type Tone } from './ui'
 import { UpdateMenuItems, useUpdates } from './update'
 
 export type Profile = { user: string; steamid: string; name: string; avatar: string }
@@ -516,6 +516,9 @@ export function AccountPill() {
             <LogIn size={15} /> {t('account.signIn')}
           </button>
           <LanguageMenu open={languages} toggle={() => setLanguages(!languages)} />
+          <a className="menu-item" role="menuitem" href={DISCORD} target="_blank" rel="noreferrer">
+            <DiscordIcon size={15} /> Discord
+          </a>
           <UpdateMenuItems close={() => setOpen(false)} />
         </div>
       )}
@@ -538,6 +541,9 @@ export function AccountPill() {
             <FolderOpen size={15} /> {t('account.library')}
           </button>
           <LanguageMenu open={languages} toggle={() => setLanguages(!languages)} />
+          <a className="menu-item" role="menuitem" href={DISCORD} target="_blank" rel="noreferrer">
+            <DiscordIcon size={15} /> Discord
+          </a>
           <UpdateMenuItems close={() => setOpen(false)} />
           <button
             className="menu-item danger"

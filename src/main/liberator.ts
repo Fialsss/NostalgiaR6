@@ -5,10 +5,11 @@
  * port, reports its state and the playlist tree as JSON lines, and takes commands the same way.
  */
 import { spawn, type ChildProcess } from 'node:child_process'
-import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createServer, type AddressInfo, type Socket } from 'node:net'
 import { join } from 'node:path'
 import { emit, settings, TOOLS, update, type Methods } from './core'
+import { usable } from './exe'
 import { zipEntry } from './net'
 
 const EXE = join(TOOLS, 'Liberator.exe')
@@ -27,11 +28,12 @@ let proc: ChildProcess | null = null
 let sock: Socket | null = null
 let timer: NodeJS.Timeout | undefined
 let delay = FIRST_TRY
+let blocked = '' // Windows refused to start the exe: error code, or '' when fine
 
-export const available = () => existsSync(EXE)
+export const available = () => existsSync(EXE) && usable(EXE)
 /** attached to a game: its exe is in use */
 export const busy = () => !!proc
-const snapshot = () => ({ ...state, available: available(), enabled: settings().liberator, game })
+const snapshot = () => ({ ...state, available: available(), enabled: settings().liberator, game, blocked })
 
 export async function fetchExe() {
   const exe = await zipEntry(RUNTIME, 'Liberator.exe')
@@ -49,6 +51,7 @@ export function prefetch(): void {
 export async function start(): Promise<void> {
   game = true
   delay = FIRST_TRY
+  blocked = '' // a new session deserves a fresh try: the antivirus may have been told to allow it
   emit('liberator.state', snapshot())
   if (!settings().liberator) return
   if (!available()) await fetchExe().catch(() => undefined)
@@ -73,18 +76,32 @@ function retry() {
 }
 
 function attach() {
-  if (!game || sock || proc || !existsSync(EXE)) return
+  if (!game || sock || proc || !available()) return // a broken file is not worth a spawn
   const server = createServer((client) => {
     server.close()
     sock = client
     delay = FIRST_TRY
+    blocked = '' // it started after all
     listen(client)
   })
   server.listen(0, '127.0.0.1', () => {
     const port = (server.address() as AddressInfo).port
-    const child = spawn(EXE, ['--runtime', String(port)], { windowsHide: true, stdio: 'ignore' })
+    let child: ChildProcess
+    try {
+      child = spawn(EXE, ['--runtime', String(port)], { windowsHide: true, stdio: 'ignore' })
+    } catch (e) {
+      // Windows can refuse outright - antivirus, a blocked file, a broken download - and spawn
+      // then THROWS instead of emitting 'error'. Thrown from this listen callback it reached
+      // nobody and took the whole main process down with it.
+      server.close()
+      refused(e)
+      return
+    }
     proc = child
-    child.on('error', () => undefined) // 'exit' follows and retries
+    // the asynchronous path already worked: note why, then let 'exit' retry as before
+    child.on('error', (e: NodeJS.ErrnoException) => {
+      blocked = e.code || 'ERROR'
+    })
     child.on('exit', () => {
       server.close()
       if (proc !== child) return // we stopped it ourselves
@@ -92,6 +109,24 @@ function attach() {
       if (!sock) retry()
     })
   })
+}
+
+/**
+ * The exe is there but will not start. Retrying would loop on the same refusal, so stop and say
+ * so: the page shows the reason instead of the app dying with a JavaScript error dialog.
+ */
+function refused(e: unknown) {
+  blocked = (e as NodeJS.ErrnoException)?.code || 'UNKNOWN'
+  clearTimeout(timer)
+  proc = null
+  if (!usable(EXE)) {
+    try {
+      unlinkSync(EXE) // a broken download: drop it so the page offers to fetch it again
+    } catch {
+      // locked or already gone
+    }
+  }
+  emit('liberator.state', snapshot())
 }
 
 function listen(client: Socket) {

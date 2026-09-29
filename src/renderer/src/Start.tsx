@@ -69,8 +69,9 @@ export function LanguageGrid({ compact = false, onPick }: { compact?: boolean; o
           }}
         >
           <Flag lang={id} size={compact ? 22 : 30} />
-          <span className="grow">{name}</span>
-          {lang === id && <Check size={14} className="lang-check" />}
+          {/* in the small menu the flag already says "Brasil": the name alone fits on one line */}
+          <span className="grow">{compact ? name.replace(/ \(.*\)$/, '') : name}</span>
+          {lang === id && !compact && <Check size={14} className="lang-check" />}
         </button>
       ))}
     </div>

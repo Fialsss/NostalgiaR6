@@ -16,6 +16,7 @@ type Status = {
   available: boolean
   enabled: boolean
   game: boolean
+  blocked: string
 }
 
 const GROUPS = [
@@ -93,7 +94,8 @@ export default function Liberator({ go, setArt }: PageProps) {
   }
 
   let state = t('liberator.state.off')
-  if (status?.enabled && !status.available) state = t('liberator.state.missing')
+  if (status?.enabled && status.blocked) state = t('liberator.state.blocked')
+  else if (status?.enabled && !status.available) state = t('liberator.state.missing')
   else if (status?.enabled && status.attached) state = status.status || t('liberator.state.attached')
   else if (status?.enabled && status.game) state = t('liberator.state.waiting')
   else if (status?.enabled) state = t('liberator.state.idle')
@@ -113,6 +115,18 @@ export default function Liberator({ go, setArt }: PageProps) {
           )
         }
       />
+
+      {status?.blocked && (
+        <div className="card lib-empty">
+          <span className="tile-icon">
+            <LockOpen size={18} />
+          </span>
+          <div className="grow">
+            <b>{t('liberator.blockedTitle')}</b>
+            <small>{t('liberator.blockedBody').replace('{code}', status.blocked)}</small>
+          </div>
+        </div>
+      )}
 
       {status && !status.available && (
         <div className="card lib-empty">

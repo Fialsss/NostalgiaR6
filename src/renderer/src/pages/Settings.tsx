@@ -6,7 +6,7 @@ import { Mark } from '../art'
 import { useI18n } from '../i18n'
 import { Avatar, useSession } from '../session'
 import { LanguageGrid } from '../Start'
-import { PageHead, Spinner, Switch } from '../ui'
+import { DISCORD, DiscordIcon, PageHead, Spinner, Switch } from '../ui'
 import { useUpdates } from '../update'
 
 const REPO = 'https://github.com/Fialsss/NostalgiaR6'
@@ -252,6 +252,17 @@ export default function Settings({ setArt, startTour }: PageProps) {
                 </button>
               </div>
             </div>
+            <div className="setting">
+              <div className="setting-label">
+                <b>{t('discord.title')}</b>
+                <small>{t('discord.hint')}</small>
+              </div>
+              <div className="setting-control">
+                <a className="btn discord small" href={DISCORD} target="_blank" rel="noreferrer">
+                  <DiscordIcon /> {t('discord.join')}
+                </a>
+              </div>
+            </div>
             <div className="faq">
               {FAQ.map((key) => (
                 <details key={key}>
@@ -276,6 +287,9 @@ export default function Settings({ setArt, startTour }: PageProps) {
                 </div>
                 <a className="btn primary small" href={KOFI} target="_blank" rel="noreferrer">
                   <Coffee size={14} /> {t('about.support')}
+                </a>
+                <a className="btn discord small" href={DISCORD} target="_blank" rel="noreferrer">
+                  <DiscordIcon /> Discord
                 </a>
                 <a className="btn ghost small" href={REPO} target="_blank" rel="noreferrer">
                   <ExternalLink size={14} /> GitHub

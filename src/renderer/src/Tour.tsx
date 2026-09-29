@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Gamepad2, LibraryBig, LockOpen, LogIn } f
 import type { Page } from './App'
 import { Mark } from './art'
 import { useI18n } from './i18n'
+import { DISCORD, DiscordIcon } from './ui'
 import { useSession } from './session'
 
 type Step = { key: string; page?: Page; target?: string }
@@ -147,6 +148,11 @@ export default function Tour({ go, close }: { go: (page: Page) => void; close: (
                   <LogIn size={14} /> {t('tour.signInNow')}
                 </button>
               ))}
+            {step.key === 'done' && (
+              <a className="btn discord small" href={DISCORD} target="_blank" rel="noreferrer">
+                <DiscordIcon /> {t('discord.join')}
+              </a>
+            )}
           </div>
         </div>
 

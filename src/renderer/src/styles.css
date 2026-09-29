@@ -3783,3 +3783,19 @@ p {
 .topbar.compact .nav button {
   padding: 0 12px;
 }
+
+/* Discord: its own blurple, the one place the app uses a brand colour */
+.btn.discord {
+  background: #5865f2;
+  color: #fff;
+  border-color: transparent;
+}
+.btn.discord:hover:not(:disabled) {
+  background: #4752c4;
+}
+.lang-option .grow {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
